@@ -27,7 +27,7 @@ site.indx <- final.wide.dat$pltID
 # Source: TerraClimate (https://www.climatologylab.org/terraclimate.html)
 # 30-year climate normals (1981-2010)
 # Citation: Abatzoglou et al., (2018) https://doi.org/10.1038/sdata.2017.191
-# Data accessed on: October 5, 2024
+# Data accessed on: June 13, 2025
 
 period <- "19812010"
 cvars <- c("tmax","tmin","ppt","pet","aet","def","vpd")
@@ -46,16 +46,16 @@ for (i in 1:nc.vars){
   } else if (cvars[i] == "ppt"){
     val <- apply(plt_dat[, 2:ncol(plt_dat)], 1, sum)
   } else if (cvars[i] %in% c("pet", "aet", "def")){
-    val <- apply(plt_dat[, 5:9], 1, sum)
+    val <- apply(plt_dat[, 4:10], 1, sum)
   } else {
-    val <- apply(plt_dat[, 5:9], 1, mean)
+    val <- apply(plt_dat[, 4:10], 1, mean)
   }
   X[,i] <- val
 }
 
 # Download elevation data -------------------------------------------------
 ## Source: Amazon Web Services (AWS) Terrain Tiles (https://registry.opendata.aws/terrain-tiles/)
-## Citation: Terrain Tiles was accessed on INSERT DATE from https://registry.opendata.aws/terrain-tiles.
+## Citation: Terrain Tiles was accessed on June 13, 2025 from https://registry.opendata.aws/terrain-tiles.
 elev <- get_elev_point(coords.sf, src = "aws")
 all(elev$pltID == site.indx) # quick check that data is in correct order
 X[, nc.vars + 1] <- elev$elevation

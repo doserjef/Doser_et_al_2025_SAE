@@ -37,14 +37,12 @@ coords.sf <- st_as_sf(data.frame(data.list.2$coords),
                       crs = my.crs)
 
 # Map showing the fuzzed plot locations
-ggplot(coords.sf) +
+fig.1.a <- ggplot(coords.sf) +
   geom_sf(data = se.county, fill = 'white', color = 'grey', lwd = 0.4) +
   geom_sf(size = 0.02, col = 'black') +
   theme_bw(base_size = 18) +
-  labs(x = 'Longitude', y = 'Latitude') +
+  labs(x = 'Longitude', y = 'Latitude', title = '(a)') +
   theme(text = element_text(family="LM Roman 10"))
-# ggsave(file = 'figures/plot-locations.png', width = 7, height = 7, units = 'in',
-#        bg = 'white')
 
 # Figure 1 (map showing number of plots by county) ------------------------
 # Determine number of points in each county
@@ -53,19 +51,17 @@ se.county$n.plots <- sapply(indx.by.county, length)
 
 se.county$n.plots <- ifelse(se.county$n.plots > 100, 100, se.county$n.plots)
 
-ggplot(se.county) +
+fig.1.b <- ggplot(se.county) +
   geom_sf(aes(fill = n.plots)) +
   theme_bw(base_size = 18) +
-  # scale_fill_stepsn(colors = rev(brewer.pal(9, 'Blues')),
-  #                   breaks = c(0, 10, 30, 50, 100, 135)) +
   scale_fill_gradient(low = '#F7FBFF', high = '#08306B', 
+                      breaks = c(0, 25, 50, 75, 100), 
                       labels = c('0', '25', '50', '75', '>100')) +
-  # scale_fill_gradient(low = '#67000D', high = '#FFF5F0') +
-  # scale_fill_brewer(palette = 'Blues') +
-  labs(x = 'Longitude', y = 'Latitude', fill = 'Sample\nSize') +
+  labs(x = 'Longitude', y = 'Latitude', fill = 'Sample\nSize', title = '(b)') +
   theme(text = element_text(family="LM Roman 10"),
         legend.position = 'inside',
         legend.position.inside = c(0.93, 0.4),
         legend.background = element_blank())
-ggsave(file = 'figures/Figure-1.png', width = 10, height = 7, units = 'in',
+fig.1 <- fig.1.a / fig.1.b
+ggsave(file = 'figures/Figure-1.png', width = 9, height = 12, units = 'in',
        bg = 'white')

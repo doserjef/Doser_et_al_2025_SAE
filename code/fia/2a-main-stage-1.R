@@ -52,7 +52,7 @@ tuning.list <- list(phi = 0.1)
 # Number of spatial factors to use
 n.factors <- 5
 
-# Load initial values
+# Load initial values from a previous model run
 load(paste0(out.dir, "inits-stage-1.rda"))
 
 # Run the model -----------------------------------------------------------

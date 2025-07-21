@@ -10,7 +10,7 @@
 
 ## Abstract
 
-National Forest Inventories (NFIs) provide statistically reliable information on forest resources at national and other large spatial scales. As forest management and conservation needs become increasingly complex, NFIs are being called upon to provide forest parameter estimates at spatial scales smaller than current design-based estimation procedures can provide. This is particularly true when estimates are desired by species or species groups, which is often required to inform wildlife habitat management, sustainable forestry certifications, or timber product assessments. Here we propose a multivariate spatial model for small area estimation of species-specific forest inventory parameters. The hierarchical Bayesian modeling framework accounts for key complexities in species-specific forest inventory data, such as zero-inflation, correlations among species, and residual spatial autocorrelation. Importantly, by fitting the model directly to the individual plot-level data, the framework enables estimates of species-level forest parameters, with associated uncertainty, across any user-defined small area of interest. A simulation study revealed minimal bias and higher accuracy of the proposed model-based approach compared to the design-based estimator and a non-parametric k-nearest neighbor (kNN) estimator. We applied the model to estimate species-specific county-level aboveground biomass for the 20 most abundant tree species in the southern United States using Forest Inventory and Analysis (FIA) data. Biomass estimates from the proposed model had high correlations with design-based estimates and kNN estimates. Importantly, the proposed model provided large gains in precision across all 20 species. On average across species, 91.5\% of county-level biomass estimates had higher precision compared to the design-based estimates. The proposed framework improves the ability of NFI data users to generate species-level forest parameter estimates with reasonable precision at management-relevant spatial scales.  
+National Forest Inventories (NFIs) provide statistically reliable information on forest resources at national and other large spatial scales. As forest management and conservation needs become increasingly complex, NFIs are being called upon to provide forest parameter estimates at spatial scales smaller than current design-based estimation procedures can provide. This is particularly true when estimates are desired by species or species groups, which is often required to inform wildlife habitat management, sustainable forestry certifications, or timber product assessments. Here we propose a multivariate spatial model for small area estimation of species-specific forest inventory parameters. The hierarchical Bayesian modeling framework accounts for key complexities in species-specific forest inventory data, such as zero-inflation, correlations among species, and residual spatial autocorrelation. Importantly, by fitting the model directly to the individual plot-level data, the framework enables estimates of species-level forest parameters, with associated uncertainty, across any user-defined small area of interest. A simulation study revealed minimal bias and higher accuracy of the proposed model-based approach compared to the design-based estimator. We applied the model to estimate species-specific county-level aboveground biomass for the 20 most abundant tree species in the southern United States using Forest Inventory and Analysis (FIA) data. County-level biomass estimates from the proposed model had high correlations with design-based estimates, yet the model-based estimates tended to have a slight positive bias relative to design-based estimates, particularly for abundant and managed species. Importantly, the proposed model provided large gains in precision across all 20 species. On average across species, 91.5\% of county-level biomass estimates had higher precision compared to the design-based estimates. Future work should explore incorporation of additional auxiliary data sources that can help explain fine-scale variation in biomass of managed species. The proposed framework is an attractive solution for NFI data users to generate species-level forest parameter estimates with reasonable precision at management-relevant spatial scales.  
 
 ## Repository Directory
 
@@ -32,9 +32,16 @@ Contains all code to format and extract data, fit models, and summarize results 
 + `4a-get-pred-data.R`: extract coordinates and covariates across a grid of the Southern US for prediction of biomass across the region.
 + `4b-predict.R`: predicts county-level biomass for each of the 20 species across the Southern US. 
 + `4b-submit.sh`: LSF batch script for running script `4b-predict.R` on the NC State HPC. 
-+ `5a-get-direct-estimates.R`: extracts the design-based estimates for county-level and species-specific biomass estimates across the South. 
-+ `5b-get-kNN-estimates.R`: extracts the non-parametric k nearest neighbors estimates of species-specific county-level biomass across the Southern US.  
-+ `6a-summary.R`: summarize results from the southern US case study and generate all figures included in the manuscript.  
++ `5-get-direct-estimates.R`: extracts the design-based estimates for county-level and species-specific biomass estimates across the South. 
++ `6a-subset-data.R`: subset the data for use in four-fold cross-validation.
++ `6b-main-val-stage-1.R`: fits stage 1 of the model for the four-fold cross-validation.
++ `6b-submit.sh`: LSF batch script for running `6b-main-val-stage-1.R` on the NC State HPC.
++ `6c-main-val-stage-2.R`: fits stage 2 of the model for the four-fold cross-validation. 
++ `6c-submit.sh`: LSF batch script for running `6c-main-val-stage-2.R` on the NC State HPC.
++ `6d-get-hold-out-pred-data.R`: calculates the prediction locations for the cross-validation assessment.
++ `6e-hold-out-predict.R`: predict at non-observed counties for the cross-validation assessment. 
++ `6e-submit.sh`: LSF batch script for running `6e-hold-out-predict.R` on the NC State HPC.
++ `7-summary.R`: summarize results from the southern US case study and generate all figures included in the manuscript.  
 
 ### [code/sims](./code/sims/)
 
@@ -51,7 +58,6 @@ Contains all code to implement the simulation study.
 + `3a-submit.sh`: bash script for submitting the prediction script for each of the 100 replicate data sets. 
 + `3b-get-pop-means.R`: extracts the true population county-level and species-specific means for the simulated population.
 + `3c-get-get-direct-estimates.R`: calculates the direct estimates for each of the 100 simulated data sets. 
-+ `3d-get-kNN-estimates.R`: calculates the kNN-based estimates for each of the 100 simulated data sets for each species and each county.
 + `4-summary.R`: summarizes results from the simulation study and produces two figures that highlight the bias and uncertainty of the proposed estimates. 
 
 ### [data](./data/)
@@ -59,6 +65,7 @@ Contains all code to implement the simulation study.
 Contains all data used in the Southern US FIA analysis as well as the simulation study. Note that the directory does not contain raw FIA data files.  
 
 + `covariate-data.rda`: covariate data at US FIA plot locations across the Southern US. 
++ `cross_val_data/`: directory containing all data for the cross-validation study. 
 + `se_bio_stage_1_data.rda`: complete data object needed for fitting the Stage 1 model using `spOccupancy`. 
 + `se_bio_stage_2_data.rda`: complete data object needed for fitting the Stage 2 model using `spAbundance`. 
 + `se_fia_bio_data.rda`: temporary data object containing the US FIA biomass data for the Southern US. 
@@ -74,13 +81,11 @@ Note that model-based results files are too large to store on GitHub, but these 
 
 + `inits-stage-1.rda`: initial values for Stage 1 obtained from a smaller model run used to aid in convergence in the final model run. 
 + `inits-stage-2.rda`: initial values for Stage 2 obtained from a smaller model run used to aid in convergence in the final model run. 
-+ `k-means-sae-estimates.rda`: kNN-based estimates for the FIA analysis.
 + `se_direct_estimates.rda`: direct estimates for the FIA analysis. 
 + `sim_direct_ests.rda`: direct estimates for the simulation study. 
-+ `sim_knn_ests.rda`: kNN-based estimates for the simulation study. 
 + `sim_pop_county_true.rda`: true population values for the simulation study. 
 + `sim_results/`: contains species-specific biomass small area estimates for each of the 100 replicate data sets analyzed in the simulation study. 
 
 ### [figures](./figures/)
 
-Contains all figures included in the manuscript and supplemental information. The `species-maps/` sub-directory contains all the species-specific maps included in Supplemental Information S2. Additionally, for visual comparison with the direct estimates, the sub-directory `species-maps/direct/` contains county-level direct estimates for each species (where gray locations correspond to counties without any FIA plots). These figures can all be reproduced from the scripts included in this repository. 
+Contains all figures included in the manuscript and supplemental information. The `species-maps/` sub-directory contains all the species-specific maps included in the Supplemental Information. These figures can all be reproduced from the scripts included in this repository. 

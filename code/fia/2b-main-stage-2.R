@@ -28,7 +28,7 @@ load(paste0(data.dir, "se_bio_stage_2_data.rda"))
 # Priors
 high.dist <- 2000
 low.dist <- 50
-prior.list <- list(beta.comm.normal = list(mean = 0, var = 1000),
+prior.list <- list(beta.comm.normal = list(mean = 0, var = 10),
                    tau.sq.beta.ig = list(a = 0.1, b = 0.1),
                    tau.sq.ig = list(a = 2, b = 1),
                    independent.betas = TRUE,
@@ -54,6 +54,7 @@ tuning.list <- list(phi = 0.5)
 # Note that in these initial values, the values for beta.comm = 0 and 
 # tau.sq.beta = 10, which serve as the prior values when independent.betas = TRUE. 
 load(paste0(out.dir, "inits-stage-2.rda"))
+tuning.list <- list(phi = 0.1)
 
 # Number of spatial factors
 n.factors <- 5

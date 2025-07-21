@@ -79,16 +79,16 @@ for (i in 1:nc.vars) {
   } else if (cvars[i] == "ppt"){
     val <- apply(plt_dat[, 2:ncol(plt_dat)], 1, sum)
   } else if (cvars[i] %in% c("pet", "aet", "def")){
-    val <- apply(plt_dat[, 5:9], 1, sum)
+    val <- apply(plt_dat[, 4:10], 1, sum)
   } else {
-    val <- apply(plt_dat[, 5:9], 1, mean)
+    val <- apply(plt_dat[, 4:10], 1, mean)
   }
   X.0[,i] <- val
 }
 
 # Download elevation data -------------------------------------------------
 ## Source: Amazon Web Services (AWS) Terrain Tiles (https://registry.opendata.aws/terrain-tiles/)
-## Citation: Terrain Tiles was accessed on INSERT DATE from https://registry.opendata.aws/terrain-tiles.
+## Citation: Terrain Tiles was accessed on June 15, 2025 from https://registry.opendata.aws/terrain-tiles.
 
 elev <- get_elev_point(coords.lat.long, src = "aws")
 X.0[, nc.vars + 1] <- elev$elevation

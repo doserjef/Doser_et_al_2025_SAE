@@ -10,8 +10,6 @@ library(sf)
 load('data/sim_pop_county_true.rda')
 # Read in direct estimates (loads direct.ests and direct.sds)
 load('results/sim_direct_ests.rda')
-# Read in knn estimates
-load('results/sim_knn_ests.rda')
 # Read in model-based estimates
 n.sims <- length(direct.ests)
 model.ests <- list()
@@ -26,7 +24,6 @@ for (i in 1:n.sims) {
 
 # Calculate bias and summarize --------------------------------------------
 model.bias <- sapply(model.ests, function(a) c(t(a)) - pop.vals$bio)
-knn.bias <- sapply(knn.ests, function(a) c(t(a)) - pop.vals$bio)
 # Calculate direct estimator bias, which requires more work as some 
 # counties don't always have at least one plot.
 direct.bias <- array(NA, dim = dim(model.bias))
@@ -45,13 +42,11 @@ bias.plot.df <- data.frame(species = factor(rep(rep(1:n.sp, each = 100), n.sims)
                                             levels = sp.means, ordered = TRUE),
                            county = rep(pop.vals$county, n.sims), 
                            model.bias = c(model.bias),  
-                           direct.bias = c(direct.bias), 
-                           knn.bias = c(knn.bias))
+                           direct.bias = c(direct.bias))
 bias.plot.df <- data.frame(species = factor(rep(1:n.sp, each = 100), levels = sp.means, 
                                             ordered = TRUE),
                            model.bias = apply(model.bias, 1, mean),  
-                           direct.bias = apply(direct.bias, 1, mean), 
-                           knn.bias = apply(knn.bias, 1, mean))
+                           direct.bias = apply(direct.bias, 1, mean))
 # Remove NAs situation when a species was never observed in a plot
 bias.plot.df <- bias.plot.df %>%
   filter(!is.na(direct.bias))
@@ -59,11 +54,10 @@ bias.plot.df <- bias.plot.df %>%
 bias.plot.df %>%
   group_by(species) %>%
   summarize(model = mean(model.bias), 
-            direct = mean(direct.bias), 
-            knn = mean(knn.bias))
+            direct = mean(direct.bias))
 
 bias.plot.df.long <- bias.plot.df %>%
-  pivot_longer(cols = c('model.bias', 'direct.bias', 'knn.bias'), 
+  pivot_longer(cols = c('model.bias', 'direct.bias'), 
                values_to = 'bias', names_to = 'Type') %>%
   mutate(Type = ifelse(Type == 'model.bias', 'Model', 
                        ifelse(Type == 'direct.bias', 'Direct', 'kNN')))
@@ -86,13 +80,11 @@ ggsave(plot = bias.sim.plot, file = 'figures/Figure-S2.png', width = 10,
 
 # Calculate RMSE and summarize --------------------------------------------
 model.rmse <- apply(model.bias, 1, function(a) sqrt(mean(a^2))) 
-knn.rmse <- apply(knn.bias, 1, function(a) sqrt(mean(a^2))) 
 direct.rmse <- apply(direct.bias, 1, function(a) sqrt(mean(a^2))) 
 rmse.plot.df <- data.frame(species = factor(rep(1:n.sp, each = 100), 
                                             levels = sp.means, ordered = TRUE),
                            model.rmse = model.rmse,  
-                           direct.rmse = direct.rmse, 
-                           knn.rmse = knn.rmse)
+                           direct.rmse = direct.rmse)
 # Remove NAs situation when a species was never observed in a plot
 rmse.plot.df <- rmse.plot.df %>%
   filter(!is.na(direct.rmse))
@@ -100,11 +92,10 @@ rmse.plot.df <- rmse.plot.df %>%
 rmse.plot.df %>%
   group_by(species) %>%
   summarize(model = mean(model.rmse), 
-            direct = mean(direct.rmse), 
-            knn = mean(knn.rmse))
+            direct = mean(direct.rmse))
 
 rmse.plot.df.long <- rmse.plot.df %>%
-  pivot_longer(cols = c('model.rmse', 'direct.rmse', 'knn.rmse'), 
+  pivot_longer(cols = c('model.rmse', 'direct.rmse'), 
                values_to = 'rmse', names_to = 'Type') %>%
   mutate(Type = ifelse(Type == 'model.rmse', 'Model', 
                        ifelse(Type == 'direct.rmse', 'Direct', 'kNN')))

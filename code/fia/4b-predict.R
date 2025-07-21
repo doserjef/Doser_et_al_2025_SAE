@@ -79,7 +79,7 @@ class(out.small.1) <- 'sfJSDM'
 rm(out)
 gc()
 # Stage 2
-load(paste0(out.dir, 'se-stage-2-1e+05-samples-5-factors-2025-02-19.rda'))
+load(paste0(out.dir, 'se-stage-2-1e+05-samples-chain-1-5-factors-2025-02-19.rda'))
 # Create a smaller object containing only the components needed for prediction.
 out.small.2 <- list()
 out.small.2$X <- out$X
@@ -138,7 +138,7 @@ for (j in 1:n.counties) {
   out.pred.1 <- predict(out.small.1, X.0.stage.1[curr.indx, ], coords.0[curr.indx, ], 
                         n.omp.threads = 5, verbose = FALSE)
   # Stage 2 ---------------------------
-  out.pred.2 <- predict(out.small.2, X.0.stage.2[curr.indx, ], coords.0[curr.indx, ], 
+  out.pred.2 <- predict(out.small.2, X.0.stage.2[curr.indx, , drop = FALSE], coords.0[curr.indx, ], 
                         n.omp.threads = 5, verbose = FALSE, 
                         z.0.samples = out.pred.1$z.0.samples[1:n.samples, , ])
   # Get biomass samples ---------------
