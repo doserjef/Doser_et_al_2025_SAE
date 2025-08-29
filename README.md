@@ -4,7 +4,7 @@
 
 ### Forest Ecology and Management
 
-### Code/Data DOI: 
+### Code/Data DOI: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16995883.svg)](https://doi.org/10.5281/zenodo.16995883)
 
 ### Please contact the first author for questions: Jeffrey W. Doser (jwdoser@ncsu.edu)
 
