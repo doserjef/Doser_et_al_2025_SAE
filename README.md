@@ -2,7 +2,9 @@
 
 ### [Jeffrey W. Doser](https://www.doserlab.com/), [Malcolm S. Itter](https://www.mitter-forestecology.com/), [Grant M. Domke](https://scholar.google.com/citations?user=6ke2YZ4AAAAJ&hl=en), [Andrew O. Finley](https://www.finley-lab.com/) 
 
-### In review 
+### Forest Ecology and Management
+
+### Code/Data DOI: 
 
 ### Please contact the first author for questions: Jeffrey W. Doser (jwdoser@ncsu.edu)
 
